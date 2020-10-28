@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			table {
+				border-collapse: collapse;
+				width: 600px;
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			//第1步:创建XMLHttpRequest核心对象
+			function getXhr() {
+				var xhr = null;
+				if (window.XMLHttpRequest) {
+					xhr = new XMLHttpRequest();
+				} else {
+					xhr = new ActiveXObject("Microsoft.XMLHttp");
+				}
+				return xhr;
+			}
+
+			function getAjax(url, fn) {
+				var xhr = getXhr();
+				// 第三步：建立连接
+				xhr.open("get", url, true)
+				//第2步 注册监听
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						var datajson = eval("(" + xhr.responseText + ")");
+						fn(datajson);
+					}
+				}
+				xhr.send(null);
+			}
+			window.onload = function() {
+				var oBtn1 = document.getElementById("btn1");
+				var oBtn2 = document.getElementById("btn2");
+				//01 创建表格
+				oBtn1.onclick = function() {
+					var thead = document.getElementsByTagName("thead")[0];
+					var oTr = document.createElement("tr");
+					//var arrTab=["编号","品名","单价","数量","操作"]
+					var arrTab = ["编号", "品名", "单价", "数量"]
+					for (var i = 0; i < arrTab.length; i++) {
+						var oTh = document.createElement("th");
+						var oText = document.createTextNode(arrTab[i]);
+						oTh.appendChild(oText);
+						oTr.appendChild(oTh);
+					}
+					thead.appendChild(oTr);
+				}
+				//02 加载ajax
+				oBtn2.onclick = function() {
+					getAjax("data/data1.json", function(data) {
+						//console.log(data)
+						var tbody = document.getElementsByTagName("tbody")[0];
+						for (var i = 0; i < data.length; i++) {
+							var oTr = document.createElement("tr");
+							for (var pro in data[i]) {
+								var oTd = document.createElement("td");
+								var oText = document.createTextNode(data[i][pro]);
+								oTd.appendChild(oText);
+								oTr.appendChild(oTd);
+							}
+							tbody.appendChild(oTr);
+						}
+					});
+				}
+			}
+		</script>
+		<button type="button" id="btn1">创建表格</button>
+		<button type="button" id="btn2">加载数据</button>
+		<table border="1" cellspacing="0" cellpadding="0">
+			<thead>
+
+			</thead>
+			<tbody>
+
+			</tbody>
+		</table>
+	</body>
+</html>
